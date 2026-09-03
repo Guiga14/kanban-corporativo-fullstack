@@ -153,8 +153,12 @@ function App() {
     const filteredTasks = tasks.filter(task => {
       const matchStatus = task.status === statusName;
 
-      const matchTeam = filterTeamId === "" || String(task.teamId) === String(filterTeamId);
-      const matchUser = filterUserId === "" || String(task.userId) === String(filterUserId);
+      // Pega o ID com segurança, seja direto ou de dentro do objeto do Spring Boot
+      const currentTeamId = task.team?.id !== undefined ? task.team.id : task.teamId;
+      const currentUserId = task.user?.id !== undefined ? task.user.id : task.userId;
+
+      const matchTeam = filterTeamId === "" || String(currentTeamId) === String(filterTeamId);
+      const matchUser = filterUserId === "" || String(currentUserId) === String(filterUserId);
 
       let matchDeadline = true;
       if (filterDeadline === "ATRASADAS") {
