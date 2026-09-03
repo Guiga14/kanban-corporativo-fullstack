@@ -1,0 +1,19 @@
+### Criar uma nova tarefa
+POST http://localhost:8080/tasks
+Content-Type: application/json
+
+{
+  "title": "Criar estrutura do banco de dados",
+  "description": "Configurar entidades e relacionamentos iniciais no PostgreSQL",
+  "status": "A Fazer"
+}
+
+### Atualizar uma tarefa
+PUT http://localhost:8080/tasks/43
+Content-Type: application/json
+
+{
+  "title": "Estudar Spring Boot - Atualizado",
+  "description": "Terminar a implementação do método PUT com sucesso",
+  "status": "Em Andamento"
+}

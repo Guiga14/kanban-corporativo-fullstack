@@ -1,40 +1,43 @@
-# 👾 Kanban Corporativo (Retro Edition)
+# 👾 Kanban Corporativo (Full-Stack)
 
-Um sistema de gestão de tarefas Fullstack focado em produtividade corporativa, construído com uma arquitetura de banco de dados relacional e estilizado com uma interface Retro/Pixel Art imersiva.
+Um sistema completo de gerenciamento de tarefas (estilo Kanban) com um design exclusivo inspirado em interfaces retrô e pixel art. Este projeto foi desenvolvido para demonstrar a integração de uma API RESTful robusta em Java com uma interface moderna e interativa em React.
 
-## 🚀 Funcionalidades
+## 🚀 Tecnologias Utilizadas
 
-*   **Gestão de Tarefas (CRUD):** Criação, edição, exclusão e movimentação de tarefas entre colunas (A Fazer, Em Progresso, Concluídas).
-*   **Arquitetura Relacional:** Relacionamento estruturado entre Tarefas, Usuários e Equipes utilizando chaves estrangeiras (Foreign Keys).
-*   **Filtros Dinâmicos:** Busca filtrada por Equipes e Responsáveis implementada diretamente na API via Query Parameters.
-*   **UI/UX Personalizada:** Interface responsiva construída do zero com Tailwind CSS, apresentando um design "Retro 8-bits" com modais dinâmicos e validação de formulários.
-*   **Database Seeding:** População automática de times e usuários de teste ao iniciar a aplicação pela primeira vez.
+### Back-end (API REST)
+* **Java 17+**
+* **Spring Boot** (Web, Data JPA, Validation)
+* **PostgreSQL** (Banco de dados relacional)
+* **Padrão DTO** (Data Transfer Object) utilizando `records`
+* **Arquitetura em Camadas** (Controller, Service, Repository)
 
-## 🛠️ Tecnologias Utilizadas
+### Front-end
+* **React.js** (com Vite)
+* **Tailwind CSS** (Estilização avançada e customizada)
+* **Drag and Drop API** (Para movimentação dos cards)
+* **Integração assíncrona** com `fetch`
 
-### Backend
-*   **Linguagem:** Go (Golang)
-*   **Framework Web:** Gin
-*   **ORM:** GORM
-*   **Banco de Dados:** PostgreSQL
+## ✨ Funcionalidades Principais
 
-### Frontend
-*   **Biblioteca:** React (via Vite)
-*   **Estilização:** Tailwind CSS + Google Fonts (VT323)
+* **Gestão de Tarefas (CRUD):** Criação, edição, visualização e exclusão de tarefas.
+* **Relacionamentos de Banco de Dados:** Tarefas estão vinculadas a **Usuários** e **Equipes** (`@ManyToOne`).
+* **Dashboard de Métricas (High Scores):** Cálculo dinâmico de tarefas totais, pendentes, em progresso, concluídas e **atrasadas**.
+* **Filtros Dinâmicos:** Filtros rápidos por Equipe, Responsável e Prazo diretamente na interface.
+* **Drag-and-Drop:** Arraste e solte os cards entre as colunas (A FAZER, EM PROGRESSO, CONCLUÍDAS) para atualizar o status automaticamente no banco de dados.
+* **Validação de Dados:** Proteção contra campos nulos ou inválidos tanto no front-end quanto no back-end.
 
----
-
-## ⚙️ Como Executar o Projeto Localmente
+## 🛠️ Como Executar o Projeto Localmente
 
 ### Pré-requisitos
-*   [Go](https://golang.org/) instalado.
-*   [Node.js](https://nodejs.org/) instalado.
-*   [PostgreSQL](https://www.postgresql.org/) rodando localmente (Porta 5432).
+* Java 17 ou superior
+* Node.js e npm
+* PostgreSQL instalado e rodando
 
-### 1. Configurando o Banco de Dados e Backend
-Abra o terminal, navegue até a pasta `backend` e inicie o servidor. O GORM criará as tabelas e inserirá os dados iniciais automaticamente.
-
-```bash
-cd backend
-go mod tidy
-go run main.go
+### 1. Configurando o Back-end
+1. Navegue até a pasta `backend`.
+2. Abra o arquivo `src/main/resources/application.properties` e configure as credenciais do seu banco de dados PostgreSQL:
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/seu_banco
+   spring.datasource.username=seu_usuario
+   spring.datasource.password=sua_senha
+   spring.jpa.hibernate.ddl-auto=update

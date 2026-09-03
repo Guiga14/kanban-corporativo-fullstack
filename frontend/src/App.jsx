@@ -495,43 +495,46 @@ function App() {
       {/* MODAL DE ESTATÍSTICAS (HIGH SCORE) */}
       {showMetrics && metrics && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#2d1b54] border-4 border-slate-800 p-8 shadow-[8px_8px_0_0_#000] text-white max-w-md w-full relative rounded-md">
+          <div className="bg-slate-700 border-4 border-slate-800 p-8 shadow-[8px_8px_0_0_#1e293b] text-white max-w-md w-full relative rounded-md pixel-corners">
 
+            {/* BOTÃO 'X' MENOR E QUADRADO */}
             <button
               onClick={() => setShowMetrics(false)}
-              className="absolute top-2 right-2 bg-red-600 border-4 border-slate-800 text-white px-3 py-1 text-xl font-bold hover:bg-red-500 hover:translate-y-[2px] shadow-[4px_4px_0_0_#000] hover:shadow-none transition-all"
+              className="absolute top-3 right-3 bg-red-600 border-2 border-slate-800 text-white w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-red-500 hover:translate-y-[2px] shadow-[3px_3px_0_0_#000] hover:shadow-none transition-all"
             >
               X
             </button>
 
-            <h2 className="text-3xl font-bold text-yellow-400 text-center mb-6 drop-shadow-[2px_2px_0_#000]">
-              📈 HIGH SCORES
+            {/* TÍTULO PERFEITAMENTE CENTRALIZADO COM FLEXBOX */}
+            <h2 className="flex justify-center items-center gap-3 text-3xl font-bold text-yellow-400 mb-6 mt-2 drop-shadow-[2px_2px_0_#000]">
+              <span>📈</span>
+              <span>HIGH SCORES</span>
             </h2>
 
             <div className="flex flex-col gap-4 text-lg font-bold">
-              <div className="flex justify-between bg-black bg-opacity-50 p-3 border-2 border-slate-800 shadow-[inset_2px_2px_0_0_#000]">
+              <div className="flex justify-between bg-slate-800 p-3 border-2 border-slate-900 shadow-[inset_2px_2px_0_0_#000]">
                 <span>TOTAL DE TAREFAS:</span>
                 <span className="text-blue-400">{metrics.total}</span>
               </div>
-              <div className="flex justify-between bg-black bg-opacity-50 p-3 border-2 border-slate-800 shadow-[inset_2px_2px_0_0_#000]">
+              <div className="flex justify-between bg-slate-800 p-3 border-2 border-slate-900 shadow-[inset_2px_2px_0_0_#000]">
                 <span>A FAZER (TODO):</span>
                 <span className="text-gray-400">{metrics.todo}</span>
               </div>
-              <div className="flex justify-between bg-black bg-opacity-50 p-3 border-2 border-slate-800 shadow-[inset_2px_2px_0_0_#000]">
+              <div className="flex justify-between bg-slate-800 p-3 border-2 border-slate-900 shadow-[inset_2px_2px_0_0_#000]">
                 <span>EM PROGRESSO:</span>
                 <span className="text-yellow-400">{metrics.doing}</span>
               </div>
-              <div className="flex justify-between bg-black bg-opacity-50 p-3 border-2 border-slate-800 shadow-[inset_2px_2px_0_0_#000]">
+              <div className="flex justify-between bg-slate-800 p-3 border-2 border-slate-900 shadow-[inset_2px_2px_0_0_#000]">
                 <span>CONCLUÍDAS:</span>
                 <span className="text-green-400">{metrics.done}</span>
               </div>
 
               <div className={`flex justify-between p-3 border-2 shadow-[inset_2px_2px_0_0_#000] mt-2 transition-all duration-300 ${metrics.delayed > 0
                 ? "bg-red-900 bg-opacity-80 border-red-500 border-dashed animate-pulse"
-                : "bg-black bg-opacity-50 border-slate-800"
+                : "bg-slate-800 border-slate-900"
                 }`}>
                 <span className={metrics.delayed > 0 ? "text-red-300 font-bold" : "text-gray-400 font-bold"}>
-                  {metrics.delayed > 0 ? "⚠️ ATRASADAS:" : "⚠️ ATRASADAS:"}
+                  ⚠️ ATRASADAS:
                 </span>
                 <span className={`font-bold ${metrics.delayed > 0 ? "text-red-400" : "text-green-500"}`}>
                   {metrics.delayed}
