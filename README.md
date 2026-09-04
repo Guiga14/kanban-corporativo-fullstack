@@ -1,52 +1,30 @@
-# 👾 Kanban Corporativo (Full-Stack)
+# 🕹️ Kanban Corporativo Full-stack
 
-Um sistema completo de gerenciamento de tarefas (estilo Kanban) com um design exclusivo inspirado em interfaces retrô e pixel art. Este projeto foi desenvolvido para demonstrar a integração de uma API RESTful robusta em Java com uma interface moderna e interativa em React.
+Aplicação de gerenciamento de tarefas no estilo Retro/Pixel Art desenvolvida como projeto de portfólio para demonstrar habilidades em desenvolvimento Full-stack (Java + React).
 
 ## 🚀 Tecnologias Utilizadas
 
-### Back-end (API REST)
-* **Java 17+**
-* **Spring Boot** (Web, Data JPA, Validation)
-* **PostgreSQL** (Banco de dados relacional)
-* **Padrão DTO** (Data Transfer Object) utilizando `records`
-* **Arquitetura em Camadas** (Controller, Service, Repository)
+* **Back-end:** Java 17, Spring Boot, Spring Data JPA, PostgreSQL, Maven.
+* **Front-end:** React, Vite, Tailwind CSS (com estilização customizada Pixel Art).
 
-### Front-end
-* **React.js** (com Vite)
-* **Tailwind CSS** (Estilização avançada e customizada)
-* **Drag and Drop API** (Para movimentação dos cards)
-* **Integração assíncrona** com `fetch`
+## 📸 Demonstração do Sistema
 
-## ✨ Funcionalidades Principais
+| Visão Geral do Painel | Filtros Dinâmicos |
+| :---: | :---: |
+| ![Painel Principal](./assets/painel.png) | ![Filtros](./assets/filtros.png) |
 
-* **Gestão de Tarefas (CRUD):** Criação, edição, visualização e exclusão de tarefas.
-* **Relacionamentos de Banco de Dados:** Tarefas estão vinculadas a **Usuários** e **Equipes** (`@ManyToOne`).
-* **Dashboard de Métricas (High Scores):** Cálculo dinâmico de tarefas totais, pendentes, em progresso, concluídas e **atrasadas**.
-* **Filtros Dinâmicos:** Filtros rápidos por Equipe, Responsável e Prazo diretamente na interface.
-* **Drag-and-Drop:** Arraste e solte os cards entre as colunas (A FAZER, EM PROGRESSO, CONCLUÍDAS) para atualizar o status automaticamente no banco de dados.
-* **Validação de Dados:** Proteção contra campos nulos ou inválidos tanto no front-end quanto no back-end.
+| Estatísticas (High Scores) | Criação / Edição de Tarefas |
+| :---: | :---: |
+| ![Métricas](./assets/metricas.png) | ![Modal](./assets/modal.png) |
 
-## 🛠️ Como Executar o Projeto Localmente
+## ⚙️ Funcionalidades Principais
+* **CRUD Completo de Tarefas:** Criação, edição, exclusão e alteração de status via Drag-and-Drop ou botões de navegação.
+* **Filtros Avançados:** Filtragem dinâmica por equipes e responsáveis integrada diretamente com a API.
+* **Regras de Negócio e Métricas:** Painel estatístico para acompanhamento de tarefas totais, concluídas e alertas automáticos para prazos atrasados.
+* **Relacionamentos de Banco:** Mapeamento robusto entre Tarefas, Equipes e Usuários (`@ManyToOne`).
 
-### Pré-requisitos
-* Java 17 ou superior
-* Node.js e npm
-* PostgreSQL instalado e rodando
+## 🛠️ Como Executar o Projeto
 
-### 1. Configurando o Back-end
-1. Navegue até a pasta `backend`.
-2. Abra o arquivo `src/main/resources/application.properties` e configure as credenciais do seu banco de dados PostgreSQL:
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/seu_banco
-   spring.datasource.username=seu_usuario
-   spring.datasource.password=sua_senha
-   spring.jpa.hibernate.ddl-auto=update
----
-
-### 👨‍💻 Desenvolvido por
-
-**Guilherme Nobre**  
-*Estudante de Análise e Desenvolvimento de Sistemas | Desenvolvedor Back-end & Full-Stack*  
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/guilherme-alexandrino-nobre-96a4701a9/)
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Guiga14)
+### 1. Clonar o repositório
+```bash
+git clone [https://github.com/Guiga14/kanban-corporativo-fullstack.git](https://github.com/Guiga14/kanban-corporativo-fullstack.git)
