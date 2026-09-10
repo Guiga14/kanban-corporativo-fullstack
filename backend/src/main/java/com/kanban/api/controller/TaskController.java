@@ -2,6 +2,8 @@ package com.kanban.api.controller;
 
 import com.kanban.api.entity.Task;
 import com.kanban.api.service.TaskService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -28,8 +30,9 @@ public class TaskController {
     public record TaskRequest(String title, String description, String status, LocalDate dueDate, Long userId, Long teamId) {}
 
     @PostMapping
-    public Task criarTarefa(@RequestBody TaskRequest req) {
-        return taskService.criarTarefa(req.title(), req.description(), req.status(), req.dueDate(), req.userId(), req.teamId());
+    public ResponseEntity<Task> criarTarefa(@RequestBody TaskRequest req) {
+        Task novaTarefa = taskService.criarTarefa(req.title(), req.description(), req.status(), req.dueDate(), req.userId(), req.teamId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefa);
     }
 
     @PutMapping("/{id}")
