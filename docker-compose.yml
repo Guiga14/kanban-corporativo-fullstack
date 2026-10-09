@@ -1,3 +1,4 @@
+
 services:
   # Banco de dados PostgreSQL
   db:
@@ -5,14 +6,14 @@ services:
     container_name: kanban-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "0411"
-      POSTGRES_DB: kanban_db
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Defina POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-kanban_db}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # API em Java / Spring Boot
+  # API Java / Spring Boot
   api:
     build: ./backend
     container_name: kanban-api
@@ -21,11 +22,11 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kanban_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: "0411"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-kanban_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-kanban_app}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
 
-  # Front-end React
+  # Front-end React / Nginx
   frontend:
     build: ./frontend
     container_name: kanban-frontend
@@ -34,6 +35,5 @@ services:
     depends_on:
       - api
 
-# Declaração do volume no final do arquivo
 volumes:
   postgres_data:
