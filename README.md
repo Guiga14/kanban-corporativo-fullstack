@@ -94,55 +94,138 @@ Exemplo de corpo para criação de tarefa (IDs de usuário e equipe devem existi
 
 ## 🔐 Configuração e segurança
 
-As credenciais não ficam fixas nos arquivos de configuração atuais. O Compose recebe os valores de variáveis de ambiente; o arquivo `.env` é ignorado pelo Git.
+As credenciais são configuradas por variáveis de ambiente. O arquivo `.env` é ignorado pelo Git para evitar a publicação de informações sensíveis.
 
 1. Copie `.env.example` para `.env` na raiz do projeto.
-2. Defina valores locais para `DB_NAME`, `DB_USER`, `DB_PASSWORD` e `POSTGRES_ADMIN_PASSWORD`.
-3. Não publique o `.env`, credenciais ou backups do banco.
+2. Configure `DB_NAME`, `DB_USER`, `DB_PASSWORD` e `POSTGRES_ADMIN_PASSWORD`.
+3. Configure `FLYWAY_USER` e `FLYWAY_PASSWORD`.
+4. Não publique arquivos `.env`, senhas ou backups do PostgreSQL.
 
-O usuário `kanban_app` é destinado ao acesso da aplicação, com permissões de leitura e escrita sobre os dados necessários, sem privilégios administrativos. A API utiliza `spring.jpa.hibernate.ddl-auto=validate`, que verifica o esquema em vez de criá-lo ou alterá-lo.
+### Separação de permissões
 
-> **Estado atual da instalação:** a configuração de um banco novo **ainda não é automática**. É necessário criar as tabelas e o usuário `kanban_app`, definir sua senha e conceder as permissões apropriadas antes de iniciar a API. O Docker Compose inicializa o serviço PostgreSQL, mas não provisiona esse usuário e esse esquema sozinho. Migrações versionadas com **Flyway** estão planejadas como próxima evolução.
+O PostgreSQL utiliza dois usuários com responsabilidades distintas:
 
-## 🐳 Executando com Docker (banco já preparado)
+- `kanban_app`: utilizado pela aplicação para consultar e modificar dados, sem privilégios administrativos.
+- `kanban_migrator`: utilizado pelo Flyway para executar migrações e gerenciar a estrutura do banco.
+
+Em instalações novas, o script `database/init/01-init-users.sh` cria os usuários e configura automaticamente suas permissões.
+
+### Migrações com Flyway
+
+O Flyway gerencia o versionamento do esquema do PostgreSQL.
+
+A migração inicial está localizada em:
+
+`backend/src/main/resources/db/migration/V1__create_initial_tables.sql`
+
+Em um banco vazio, essa migração cria as tabelas `users`, `teams` e `tasks`, incluindo suas chaves primárias e relacionamentos.
+
+O Hibernate utiliza `spring.jpa.hibernate.ddl-auto=validate`, verificando a estrutura do banco sem modificá-la automaticamente.
+
+O histórico das migrações executadas é armazenado na tabela `flyway_schema_history`.
+
+
+## 🐳 Executando com Docker
 
 **Pré-requisitos:** Git, Docker e Docker Compose.
+
+### 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/Guiga14/kanban-corporativo-fullstack.git
 cd kanban-corporativo-fullstack
 ```
 
-Prepare o `.env` como descrito acima. Para reproduzir o ambiente já configurado, o PostgreSQL deve conter o esquema do Kanban e o usuário da aplicação, com suas permissões. Em uma instalação do zero, essas etapas ainda são manuais.
+### 2. Configurar as variáveis de ambiente
 
-Com o banco preparado, execute:
+Copie o arquivo `.env.example` para `.env`.
+
+No Windows (CMD):
+
+```bat
+copy .env.example .env
+```
+
+Configure as senhas no arquivo `.env`, mantendo separadas as credenciais do PostgreSQL, da aplicação e do Flyway.
+
+### 3. Iniciar a aplicação
 
 ```bash
 docker compose up -d --build
 ```
 
-Verifique os serviços e os logs:
+Em uma instalação com banco vazio:
+
+- O PostgreSQL cria o banco de dados.
+- O script `01-init-users.sh` cria os usuários e configura suas permissões.
+- O Flyway executa a migração V1 e cria as tabelas.
+- O Spring Boot valida o esquema com Hibernate.
+
+A inicialização automática foi validada em um ambiente PostgreSQL isolado.
+
+### 4. Acessar o sistema
+
+- Front-end: http://localhost:5173
+- API REST: http://localhost:8080
+
+Para verificar o estado dos serviços:
 
 ```bash
 docker compose ps
 docker compose logs --tail=50 api
 ```
 
-Abra o front-end em **http://localhost:5173**. A API utiliza a porta **8080**.
-
-Para interromper os serviços sem solicitar a exclusão do volume:
+### 5. Encerrar os serviços
 
 ```bash
 docker compose down
 ```
 
-> Evite `docker compose down -v` quando quiser preservar os dados do PostgreSQL: a opção `-v` remove os volumes gerenciados pelo Compose.
+O volume `postgres_data` mantém os dados entre recriações dos contêineres.
+
+**Atenção:** não execute `docker compose down -v` caso queira preservar os dados do PostgreSQL.
+
+### Testes de integração
+
+O arquivo `docker-compose.test.yml` fornece um ambiente PostgreSQL separado para validar a inicialização automática.
+
+```bash
+docker compose -p kanban-init-test -f docker-compose.test.yml up -d db-test
+```
+
+Para executar a API de teste, primeiro construa a imagem da API principal, se ainda não existir, e depois utilize o perfil `integration`:
+
+```bash
+docker compose build api
+docker compose -p kanban-init-test -f docker-compose.test.yml --profile integration up -d api-test
+```
+
+O ambiente de teste utiliza seu próprio volume, `postgres_init_test_data`, sem compartilhar os dados do banco principal.
+
+**Observação:** o banco deve estar disponível antes da inicialização da API. Em algumas máquinas, pode ser necessário aguardar o PostgreSQL ficar pronto e reiniciar a API.
+
 
 ## 📚 Aprendizados e próximos passos
 
-Este projeto reúne práticas de APIs REST, modelagem de entidades, integração React–Spring Boot, persistência com PostgreSQL, Docker Compose, gerenciamento de credenciais, permissões de banco e commits semânticos.
+Este projeto reúne conhecimentos práticos de desenvolvimento e infraestrutura:
 
-**Próxima melhoria planejada:** adicionar Flyway para versionar o esquema e facilitar a inicialização de novos ambientes. A documentação de instalação será atualizada quando esse fluxo estiver implementado e testado.
+- Desenvolvimento de APIs REST com Java 21 e Spring Boot 4.
+- Integração entre React e Spring Boot.
+- Modelagem relacional e persistência com JPA/Hibernate.
+- Containerização de aplicações com Docker Compose.
+- Versionamento do banco de dados com Flyway.
+- Inicialização automatizada do PostgreSQL.
+- Separação de permissões entre aplicação e migrações.
+- Gerenciamento de credenciais com variáveis de ambiente.
+- Testes de integração em ambiente isolado.
+- Versionamento com Git e Conventional Commits.
+
+### Próximas melhorias
+
+- Implementar testes automatizados adicionais para a API.
+- Adicionar healthchecks ao Docker Compose.
+- Melhorar o tratamento de erros e as validações.
+- Preparar o projeto para implantação em ambiente de hospedagem.
 
 ## 👨‍💻 Autor
 

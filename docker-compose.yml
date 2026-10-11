@@ -1,17 +1,31 @@
-
 services:
   # Banco de dados PostgreSQL
   db:
     image: postgres:16-alpine
     container_name: kanban-db
     environment:
+      # Administracao do PostgreSQL
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Defina POSTGRES_ADMIN_PASSWORD}
       POSTGRES_DB: ${DB_NAME:-kanban_db}
+
+      # Usuario da aplicacao
+      DB_USER: ${DB_USER:-kanban_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
+
+      # Usuario exclusivo para migracoes Flyway
+      FLYWAY_USER: ${FLYWAY_USER:-kanban_migrator}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Defina FLYWAY_PASSWORD}
+
     ports:
       - "5432:5432"
     volumes:
+      # Inicializa usuarios e permissoes em bancos novos
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+
+      # Preserva os dados do PostgreSQL
       - postgres_data:/var/lib/postgresql/data
+
 
   # API Java / Spring Boot
   api:
@@ -21,10 +35,17 @@ services:
       - "8080:8080"
     depends_on:
       - db
+
     environment:
+      # Conexão da aplicação com PostgreSQL
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-kanban_db}
       SPRING_DATASOURCE_USERNAME: ${DB_USER:-kanban_app}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
+
+      # Conexão exclusiva para migrações com Flyway
+      SPRING_FLYWAY_URL: jdbc:postgresql://db:5432/${DB_NAME:-kanban_db}
+      SPRING_FLYWAY_USER: ${FLYWAY_USER:-kanban_migrator}
+      SPRING_FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Defina FLYWAY_PASSWORD}
 
   # Front-end React / Nginx
   frontend:

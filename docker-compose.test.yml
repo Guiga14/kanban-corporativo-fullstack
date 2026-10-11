@@ -1,0 +1,59 @@
+# Ambiente isolado para testar PostgreSQL e Flyway
+
+services:
+
+  # ==========================================
+  # POSTGRESQL DE TESTE
+  # ==========================================
+  db-test:
+    image: postgres:16-alpine
+    container_name: kanban-db-init-test
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Defina POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: kanban_init_test
+
+      # Usuario da aplicacao
+      DB_USER: ${DB_USER:-kanban_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
+
+      # Usuario exclusivo do Flyway
+      FLYWAY_USER: ${FLYWAY_USER:-kanban_migrator}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Defina FLYWAY_PASSWORD}
+
+    volumes:
+      # Scripts executados na primeira inicializacao
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+
+      # Volume exclusivo do banco de teste
+      - postgres_init_test_data:/var/lib/postgresql/data
+
+  # ==========================================
+  # API DE TESTE
+  # ==========================================
+  api-test:
+    image: kanban-java-react-api:latest
+
+    profiles:
+      - integration
+
+    environment:
+      # Conexao da aplicacao
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-test:5432/kanban_init_test
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-kanban_app}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
+
+      # Conexao exclusiva do Flyway
+      SPRING_FLYWAY_URL: jdbc:postgresql://db-test:5432/kanban_init_test
+      SPRING_FLYWAY_USER: ${FLYWAY_USER:-kanban_migrator}
+      SPRING_FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Defina FLYWAY_PASSWORD}
+
+    depends_on:
+      - db-test
+
+# ==========================================
+# VOLUME EXCLUSIVO DO AMBIENTE DE TESTE
+# ==========================================
+volumes:
+  postgres_init_test_data:
